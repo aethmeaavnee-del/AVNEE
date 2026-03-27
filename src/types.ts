@@ -1,8 +1,7 @@
 
 export type CakeSize = 'Small' | 'Medium' | 'Large';
-export type CakeShape = 'Round' | 'Square' | 'Heart';
+export type CakeShape = 'Round' | 'Square';
 export type CakeColor = 'Pastel Pink' | 'Chocolate Brown' | 'Pastel Yellow' | 'Pastel Purple';
-export type CreamStyle = 'Smooth' | 'Swirl' | 'Drip' | 'Piped';
 export type CreamColor = 'Dark Pink' | 'Dark Brown' | 'Dark Yellow' | 'Dark Purple';
 export type Topping = 'Blueberries' | 'Rainbow Sprinkles' | 'Chocolate Pieces' | 'White Candles' | 'Strawberries' | 'Mint Leaves';
 
@@ -17,7 +16,6 @@ export interface CakeConfig {
   size: CakeSize;
   shape: CakeShape;
   color: CakeColor;
-  creamStyle: CreamStyle;
   creamColor: CreamColor;
   toppings: Topping[]; // Keep for legacy/selection
   placedToppings: PlacedTopping[];
@@ -36,7 +34,7 @@ export interface CardConfig {
 }
 
 export interface AppState {
-  step: 'landing' | 'cake' | 'card' | 'preview';
+  step: 'landing' | 'cake' | 'card' | 'preview' | 'share';
   cake: CakeConfig;
   card: CardConfig;
 }

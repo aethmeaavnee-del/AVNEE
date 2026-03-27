@@ -84,6 +84,17 @@ export const CakeVisual: React.FC<CakeVisualProps> = ({ config, className = "", 
   };
 
   const renderCake = () => {
+    const isRound = config.shape === 'Round';
+    const isSquare = config.shape === 'Square';
+
+    const layerBorderRadius = isRound 
+      ? '50% 50% 20% 20% / 25% 25% 10% 10%' 
+      : '4px 4px 2px 2px';
+
+    const frostingBorderRadius = isRound 
+      ? '50% 50% 0 0 / 40% 40% 0 0' 
+      : '4px 4px 0 0';
+
     return (
       <div className={`relative w-full h-96 flex items-center justify-center`}>
         <motion.div 
@@ -100,35 +111,57 @@ export const CakeVisual: React.FC<CakeVisualProps> = ({ config, className = "", 
           }}
         >
           {/* Dark Base */}
-          <div className="absolute bottom-6 w-64 h-4 bg-[#3E2723] rounded-sm z-0 shadow-lg" />
+          <motion.div 
+            layout
+            className="absolute bottom-6 h-4 bg-[#3E2723] z-0 shadow-lg" 
+            animate={{ 
+              width: isRound ? 240 : 250,
+              borderRadius: isRound ? '50%' : '4px'
+            }}
+          />
 
           {/* Bottom Layer */}
-          <div 
-            className="w-60 h-24 relative z-10"
-            style={{ backgroundColor: cakeColor, borderRadius: '4px 4px 0 0' }}
+          <motion.div 
+            layout
+            className="w-60 h-24 relative z-10 shadow-md"
+            animate={{ 
+              borderRadius: layerBorderRadius,
+            }}
+            style={{ backgroundColor: cakeColor }}
           >
             {/* Middle Frosting (Wavy) */}
-            <div 
+            <motion.div 
+              layout
               className="absolute -top-4 left-0 w-full h-12 z-20"
+              animate={{ 
+                borderRadius: frostingBorderRadius,
+              }}
               style={{ 
                 backgroundColor: creamColor,
-                borderRadius: '50% 50% 0 0 / 20% 20% 0 0',
                 clipPath: 'polygon(0% 20%, 10% 0%, 20% 20%, 30% 0%, 40% 20%, 50% 0%, 60% 20%, 70% 0%, 80% 20%, 90% 0%, 100% 20%, 100% 100%, 0% 100%)'
               }}
             />
-          </div>
+          </motion.div>
 
           {/* Top Layer */}
-          <div 
-            className="w-60 h-24 relative z-30"
-            style={{ backgroundColor: cakeColor, borderRadius: '4px 4px 0 0', marginTop: '-12px' }}
+          <motion.div 
+            layout
+            className="w-60 h-24 relative z-30 shadow-lg"
+            animate={{ 
+              borderRadius: layerBorderRadius,
+              y: -12
+            }}
+            style={{ backgroundColor: cakeColor }}
           >
             {/* Top Frosting (Wavy) */}
-            <div 
+            <motion.div 
+              layout
               className="absolute -top-6 left-0 w-full h-16 z-40"
+              animate={{ 
+                borderRadius: frostingBorderRadius,
+              }}
               style={{ 
                 backgroundColor: creamColor,
-                borderRadius: '50% 50% 0 0 / 30% 30% 0 0',
                 clipPath: 'polygon(0% 25%, 10% 0%, 20% 25%, 30% 0%, 40% 25%, 50% 0%, 60% 25%, 70% 0%, 80% 25%, 90% 0%, 100% 25%, 100% 100%, 0% 100%)'
               }}
             >
@@ -138,8 +171,8 @@ export const CakeVisual: React.FC<CakeVisualProps> = ({ config, className = "", 
                   {config.text}
                 </span>
               </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Placed Toppings */}
           <div className="absolute inset-0 z-50 pointer-events-none">

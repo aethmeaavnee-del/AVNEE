@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Cake, Heart, Mail, ChevronRight, ChevronLeft, Instagram, MessageCircle, CheckCircle2 } from 'lucide-react';
-import { AppState, CakeSize, CakeShape, CakeColor, CreamStyle, CreamColor, Topping, CardTemplate, TextAlignment } from './types';
+import { Cake, Heart, Mail, ChevronRight, ChevronLeft, Instagram, MessageCircle, CheckCircle2, Facebook, Share2, Copy, Send } from 'lucide-react';
+import { AppState, CakeSize, CakeShape, CakeColor, CreamColor, Topping, CardTemplate, TextAlignment } from './types';
 import { CakeVisual } from './components/CakeVisual';
 import { CardVisual } from './components/CardVisual';
 
@@ -11,7 +11,6 @@ const INITIAL_STATE: AppState = {
     size: 'Medium',
     shape: 'Round',
     color: 'Pastel Yellow',
-    creamStyle: 'Piped',
     creamColor: 'Dark Brown',
     toppings: [],
     placedToppings: [],
@@ -29,6 +28,14 @@ const INITIAL_STATE: AppState = {
 export default function App() {
   const [state, setState] = useState<AppState>(INITIAL_STATE);
   const [selectedTopping, setSelectedTopping] = useState<Topping | null>(null);
+
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(window.location.href);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   const updateCake = (updates: Partial<AppState['cake']>) => {
     setState(prev => ({ ...prev, cake: { ...prev.cake, ...updates } }));
@@ -85,7 +92,7 @@ export default function App() {
             <span className="font-serif font-bold text-xl tracking-tight">Pastel Petals</span>
           </div>
           <div className="flex gap-4">
-            {(['cake', 'card', 'preview'] as const).map((s) => (
+            {(['cake', 'card', 'preview', 'share'] as const).map((s) => (
               <div 
                 key={s}
                 className={`w-2 h-2 rounded-full transition-all duration-300 ${
@@ -172,7 +179,7 @@ export default function App() {
                     ))}
                   </div>
                   <div className="flex flex-wrap gap-3">
-                    {(['Round', 'Square', 'Heart'] as CakeShape[]).map(shape => (
+                    {(['Round', 'Square'] as CakeShape[]).map(shape => (
                       <button 
                         key={shape}
                         onClick={() => updateCake({ shape })}
@@ -200,18 +207,7 @@ export default function App() {
                 </div>
 
                 <div className="space-y-6">
-                  <h3 className="text-sm uppercase tracking-widest opacity-50 font-sans font-bold">Cream Details</h3>
-                  <div className="flex flex-wrap gap-3">
-                    {(['Smooth', 'Swirl', 'Drip', 'Piped'] as CreamStyle[]).map(style => (
-                      <button 
-                        key={style}
-                        onClick={() => updateCake({ creamStyle: style })}
-                        className={`px-6 py-2 rounded-full border transition-all ${state.cake.creamStyle === style ? 'bg-pastel-mint border-pastel-mint text-white' : 'border-muted-charcoal/10 hover:bg-white'}`}
-                      >
-                        {style}
-                      </button>
-                    ))}
-                  </div>
+                  <h3 className="text-sm uppercase tracking-widest opacity-50 font-sans font-bold">Cream Color</h3>
                   <div className="flex gap-4">
                     {(['Dark Pink', 'Dark Brown', 'Dark Yellow', 'Dark Purple'] as CreamColor[]).map(color => (
                       <button 
@@ -383,12 +379,116 @@ export default function App() {
                   Edit Design
                 </button>
                 <button 
-                  onClick={() => alert('Order Confirmed! 🎉')}
+                  onClick={() => setState(prev => ({ ...prev, step: 'share' }))}
                   className="flex-1 py-5 rounded-full bg-pastel-coral text-white font-bold pastel-shadow hover:scale-105 transition-all flex items-center justify-center gap-2"
                 >
                   Confirm Order <CheckCircle2 size={20} />
                 </button>
               </div>
+            </motion.section>
+          )}
+          {state.step === 'share' && (
+            <motion.section 
+              key="share"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -30 }}
+              className="flex-1 flex flex-col items-center justify-center p-8 lg:p-16 text-center"
+            >
+              <div className="w-24 h-24 bg-pastel-mint/20 rounded-full flex items-center justify-center mb-8 animate-bounce">
+                <CheckCircle2 className="text-pastel-mint" size={48} />
+              </div>
+              <h2 className="text-5xl md:text-6xl font-serif mb-4">Confirmed! 🎉</h2>
+              <p className="text-muted-charcoal/60 mb-12 max-w-xl">Your celebration has been created. Share the joy with your friends and family!</p>
+
+              <div className="bg-white/40 p-10 rounded-[3rem] pastel-shadow max-w-2xl w-full">
+                <h3 className="text-xl font-serif mb-8">Share the Link</h3>
+                
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-10">
+                  <a 
+                    href={`https://api.whatsapp.com/send?text=Check out this celebration I created! ${window.location.href}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-white/50 transition-all group"
+                  >
+                    <div className="w-14 h-14 bg-[#25D366]/10 rounded-full flex items-center justify-center text-[#25D366] group-hover:scale-110 transition-transform">
+                      <MessageCircle size={28} />
+                    </div>
+                    <span className="text-sm font-medium">WhatsApp</span>
+                  </a>
+                  
+                  <a 
+                    href={`https://www.facebook.com/sharer/sharer.php?u=${window.location.href}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-white/50 transition-all group"
+                  >
+                    <div className="w-14 h-14 bg-[#1877F2]/10 rounded-full flex items-center justify-center text-[#1877F2] group-hover:scale-110 transition-transform">
+                      <Facebook size={28} />
+                    </div>
+                    <span className="text-sm font-medium">Facebook</span>
+                  </a>
+
+                  <a 
+                    href="https://www.instagram.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-white/50 transition-all group"
+                  >
+                    <div className="w-14 h-14 bg-gradient-to-tr from-[#f9ce34] via-[#ee2a7b] to-[#6228d7] bg-opacity-10 rounded-full flex items-center justify-center text-[#ee2a7b] group-hover:scale-110 transition-transform">
+                      <Instagram size={28} />
+                    </div>
+                    <span className="text-sm font-medium">Instagram</span>
+                  </a>
+
+                  <button 
+                    onClick={copyToClipboard}
+                    className="flex flex-col items-center gap-3 p-4 rounded-2xl hover:bg-white/50 transition-all group relative"
+                  >
+                    <div className="w-14 h-14 bg-pastel-coral/10 rounded-full flex items-center justify-center text-pastel-coral group-hover:scale-110 transition-transform">
+                      <Copy size={28} />
+                    </div>
+                    <span className="text-sm font-medium">Copy Link</span>
+                    {copied && (
+                      <motion.span 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute -top-8 bg-muted-charcoal text-white text-[10px] px-2 py-1 rounded"
+                      >
+                        Copied!
+                      </motion.span>
+                    )}
+                  </button>
+                </div>
+
+                <div className="flex items-center gap-3 p-4 bg-white/60 rounded-2xl border border-muted-charcoal/5">
+                  <div className="flex-1 truncate text-left text-sm text-muted-charcoal/60 font-mono">
+                    {window.location.href}
+                  </div>
+                  <button 
+                    onClick={copyToClipboard}
+                    className="p-2 hover:bg-pastel-coral/10 rounded-lg text-pastel-coral transition-colors relative"
+                  >
+                    <Copy size={18} />
+                    {copied && (
+                      <motion.span 
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        className="absolute -top-8 right-0 bg-muted-charcoal text-white text-[10px] px-2 py-1 rounded"
+                      >
+                        Copied!
+                      </motion.span>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <button 
+                onClick={() => setState(INITIAL_STATE)}
+                className="mt-12 text-muted-charcoal/40 hover:text-pastel-coral transition-colors flex items-center gap-2"
+              >
+                Create another celebration <Send size={16} />
+              </button>
             </motion.section>
           )}
         </AnimatePresence>
